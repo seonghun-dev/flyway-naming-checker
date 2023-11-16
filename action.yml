@@ -1,0 +1,56 @@
+name: sample-rust-action
+description: An example GitHub Action written in Rust, generated from [dbanty/rust-github-action-template](https://github.com/dbanty/rust-github-action-template). You can either use this GitHub template and customize it yourself, or `cargo generate dbanty/rust-github-action-template` to create a new repo from this template. Any issues should be opened in the upstream template.
+author: Dylan Anthony <dbanty@users.noreply.github.com>
+inputs:
+  error:
+    description: 'The error message to display, if any'
+    required: false
+    default: ''
+  token:
+    description: 'The GitHub token to use for downloading the action, defaults to workflow token'
+    required: true
+    default: ${{ github.token }}
+outputs:
+  error:
+    description: 'The description of any error that occurred'
+    value: ${{ steps.run.outputs.error }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set reusable variables
+      shell: bash
+      run: |
+        echo "action_repo=sample-rust-action" >> $GITHUB_ENV
+        echo "action_org=dbanty" >> $GITHUB_ENV
+        echo "binary_name=sample-rust-action" >> $GITHUB_ENV
+
+    - name: Add binary extension
+      shell: bash
+      if: runner.os == 'Windows'
+      run: echo "binary_name=${{ env.binary_name }}.exe" >> $GITHUB_ENV
+
+    - name: Get Action Version
+      id: get_action_version
+      shell: pwsh
+      run: |
+        $finalComponent = Split-Path -Leaf ${{ github.action_path }}
+        if ($finalComponent -eq "${{ env.action_repo }}") {
+          $version = ""
+        } else {
+          $version = $finalComponent
+        }
+        Write-Output "version=$version" >> $Env:GITHUB_OUTPUT
+
+    - name: Download Action
+      shell: bash
+      run: |
+        gh release download ${{ steps.get_action_version.outputs.version }} --repo ${{ env.action_org }}/${{ env.action_repo }} --pattern '${{ runner.os }}.tgz'
+        tar -xzf ${{ runner.os }}.tgz
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+
+    - name: Run Action
+      shell: bash
+      id: run
+      run: ./${{ runner.os }}/${{ env.binary_name }} "${{ inputs.error }}"
