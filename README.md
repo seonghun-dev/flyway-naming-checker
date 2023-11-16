@@ -1,11 +1,31 @@
-# sample-rust-action
+# Flyway Naming Convention Checker
 
-An example GitHub Action written in Rust, generated from [dbanty/rust-github-action-template](https://github.com/dbanty/rust-github-action-template). You can either use this GitHub template and customize it yourself, or `cargo generate dbanty/rust-github-action-template` to create a new repo from this template. Any issues should be opened in the upstream template.
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-enabled-brightgreen)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-## TODO
+GitHub Actions CI workflow for validating Flyway migration script names to ensure they follow the naming convention. This Github action generated from [dbanty/rust-github-action-template](https://github.com/dbanty/rust-github-action-template).
 
-- [ ] Update this README with the details of this action
-- [ ] Update inputs/outputs in `action.yaml`
-- [ ] Implement the action's logic in `src/main.rs`
-- [ ] Trigger a release in GitHub Actions
-- [ ] Edit the triggered release to set release notes and publish the action to GitHub Marketplace
+## Example
+
+To use this GitHub Actions workflow in your repository, create a YAML file (e.g., `.github/workflows/flyway-naming-check.yml`) with the following content:
+
+```yaml
+name: Flyway Naming Check
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate-flyway-scripts:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Checkout Repository
+      uses: seonghun-dev/flyway-naming-checker@v0.0.1
+      with: 
+        paths: 'db/migration' # Adjust the path to match your migration script location
