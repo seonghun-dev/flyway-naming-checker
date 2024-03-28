@@ -4,6 +4,7 @@ author: seonghun <seonghun-dev@users.noreply.github.com>
 inputs:
   path:
     description: 'Write the path to match your migration script location'
+    required: true
     default : 'db/migration'
   token:
     description: 'The GitHub token to use for downloading the action, defaults to workflow token'
@@ -13,6 +14,7 @@ inputs:
 outputs:
   files:
     description : 'Show all file in current dir'
+    value: ${{ steps.run.outputs.files }}
   error:
     description: 'The description of any error that occurred'
     value: ${{ steps.run.outputs.error }}

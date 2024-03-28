@@ -10,6 +10,8 @@ fn main() {
 
     if !path.is_empty() {
         write(github_output_path, format!("files={path}")).unwrap();
+        exit(0);
+    } else {
         exit(1);
     }
 }
