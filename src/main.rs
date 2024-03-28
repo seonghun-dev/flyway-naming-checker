@@ -1,5 +1,3 @@
-mod tokenizer;
-
 use std::env;
 use std::fs::write;
 use std::process::exit;
