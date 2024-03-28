@@ -9,6 +9,7 @@ fn main() {
     let path = &args[1];
 
     if !path.is_empty() {
+        eprintln!("files: {path}");
         write(github_output_path, format!("files={path}")).unwrap();
         exit(0);
     } else {
