@@ -1,35 +1,47 @@
+mod error;
+mod naming_checker;
+
 use std::env;
 use std::fs;
-use std::io::{self, Write};
+use std::io::{self};
 use std::process::exit;
+
+use error::FlywayNaimngCheckerError;
+use naming_checker::is_valid_prefix;
 
 fn main() {
     let github_output_path = env::var("GITHUB_OUTPUT").unwrap();
 
     let args: Vec<String> = env::args().collect();
     let path = &args[1];
-
-    if !path.is_empty() {
-        if let Ok(files) = get_file_list(path) {
-            eprintln!("files: {:?}", files);
-
-            if let Err(err) = write(&github_output_path, format!("files={:?}", files)) {
-                eprintln!("Error writing output: {}", err);
-                exit(1);
-            } else {
-                exit(0);
-            }
-        } else {
-            eprintln!("Error reading directory");
-            exit(1);
-        }
-    } else {
-        eprintln!("No path provided");
+    if let Err(err) = run(path) {
+        eprintln!("Error: {}", err);
         exit(1);
+    } else {
+        exit(0);
     }
 }
 
-fn get_file_list(path: &str) -> io::Result<Vec<String>> {
+fn run(path: &str) -> Result<(), FlywayNaimngCheckerError> {
+    if path.is_empty() {
+        return Err(FlywayNaimngCheckerError::NoPathProvideded);
+    }
+    let files = get_file_list(path).unwrap();
+    if files.is_empty() {
+        return Err(FlywayNaimngCheckerError::CannotFindAnyFile);
+    }
+    for file in files {
+        if !is_valid_prefix(file.as_str()) {
+            return Err(FlywayNaimngCheckerError::FlywayNamingPrefixError {
+                expected: "V".to_owned(),
+                found: "error".to_owned(),
+            });
+        }
+    }
+    return Ok(());
+}
+
+fn get_file_list(path: &str) -> Result<Vec<String>, io::Error> {
     let mut files = Vec::new();
     for entry in fs::read_dir(path)? {
         let entry = entry?;
@@ -38,10 +50,4 @@ fn get_file_list(path: &str) -> io::Result<Vec<String>> {
         }
     }
     Ok(files)
-}
-
-fn write(output_path: &str, content: String) -> io::Result<()> {
-    let mut file = fs::File::create(output_path)?;
-    file.write_all(content.as_bytes())?;
-    Ok(())
 }

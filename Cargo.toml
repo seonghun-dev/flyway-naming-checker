@@ -5,4 +5,8 @@ version = "0.0.5"
 edition = "2021"
 rust-version = "1.67"
 
+[dependencies]
+thiserror = "1.0"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
