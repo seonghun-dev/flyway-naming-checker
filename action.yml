@@ -5,6 +5,10 @@ inputs:
   path:
     description: 'Write the path to match your migration script location'
     default : 'db/migration'
+  token:
+    description: 'The GitHub token to use for downloading the action, defaults to workflow token'
+    required: true
+    default: ${{ github.token }}
   
 outputs:
   files:
