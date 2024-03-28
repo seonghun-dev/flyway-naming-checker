@@ -19,9 +19,9 @@ runs:
     - name: Set reusable variables
       shell: bash
       run: |
-        echo "action_repo=sample-rust-action" >> $GITHUB_ENV
-        echo "action_org=dbanty" >> $GITHUB_ENV
-        echo "binary_name=sample-rust-action" >> $GITHUB_ENV
+        echo "action_repo=flyway-naming-checker" >> $GITHUB_ENV
+        echo "action_org=seonghun-dev" >> $GITHUB_ENV
+        echo "binary_name=flyway-naming-checker" >> $GITHUB_ENV
 
     - name: Add binary extension
       shell: bash

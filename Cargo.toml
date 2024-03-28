@@ -1,7 +1,7 @@
 [package]
-name = "sample-rust-action"
+name = "flyway-naming-checker"
 description = "An example GitHub Action written in Rust, generated from [dbanty/rust-github-action-template](https://github.com/dbanty/rust-github-action-template). You can either use this GitHub template and customize it yourself, or `cargo generate dbanty/rust-github-action-template` to create a new repo from this template. Any issues should be opened in the upstream template."
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 rust-version = "1.67"
 
