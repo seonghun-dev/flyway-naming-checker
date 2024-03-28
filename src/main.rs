@@ -31,10 +31,11 @@ fn run(path: &str) -> Result<(), FlywayNaimngCheckerError> {
         return Err(FlywayNaimngCheckerError::CannotFindAnyFile);
     }
     for file in files {
-        if !is_valid_prefix(file.as_str()) {
+        let (is_valid, result_value) = is_valid_prefix(file.as_str());
+        if !is_valid {
             return Err(FlywayNaimngCheckerError::FlywayNamingPrefixError {
-                expected: "V".to_owned(),
-                found: "error".to_owned(),
+                expected: result_value.expected,
+                found: result_value.found,
             });
         }
     }
