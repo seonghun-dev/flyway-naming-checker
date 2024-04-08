@@ -1,9 +1,6 @@
-pub struct ResultValue {
-    pub expected: String,
-    pub found: String,
-}
+use crate::error::FlywayNaimngCheckerError;
 
-pub fn is_valid_prefix(file_name: &str) -> (bool, ResultValue) {
+pub fn is_valid_prefix(file_name: &str) -> Result<(), FlywayNaimngCheckerError> {
     let first_char = file_name.chars().next();
 
     match first_char {
@@ -19,33 +16,29 @@ pub fn is_valid_prefix(file_name: &str) -> (bool, ResultValue) {
                     expected_prefix = "r";
                 }
 
-                return (
-                    false,
-                    ResultValue {
-                        found: prefix.to_string(),
-                        expected: expected_prefix.to_string(),
-                    },
-                );
+                return Err(FlywayNaimngCheckerError::FlywayNamingPrefixError {
+                    expected: expected_prefix.to_string(),
+                    found: prefix.to_string(),
+                });
             } else {
-                return (
-                    true,
-                    ResultValue {
-                        found: "V".to_string(),
-                        expected: 'V'.to_string(),
-                    },
-                );
+                return Ok(());
             }
         }
-        None => (
-            false,
-            ResultValue {
+        None => {
+            return Err(FlywayNaimngCheckerError::FlywayNamingPrefixError {
+                expected: "V".to_string(),
                 found: " ".to_string(),
-                expected: 'V'.to_string(),
-            },
-        ),
+            });
+        }
     }
 }
 
-pub fn is_valid_suffix(file_name: &str) -> bool {
-    file_name.ends_with(".sql")
+pub fn is_valid_suffix(file_name: &str) -> Result<(), FlywayNaimngCheckerError> {
+    if file_name.ends_with(".sql") {
+        return Err(FlywayNaimngCheckerError::FlywayNamingSufixError {
+            expected: ".sql".to_owned(),
+            found: ".test".to_owned(),
+        });
+    }
+    return Ok(());
 }
