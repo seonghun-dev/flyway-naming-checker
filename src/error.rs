@@ -14,7 +14,7 @@ pub enum FlywayNaimngCheckerError {
     FileIoError,
 
     #[error(
-        "Flyway file prefix naming error found in file - expected: {expected}, found: {found}"
+        "Flyway file prefix naming error found in file : {file} - expected: {expected}, found: {found}"
     )]
     FlywayNamingPrefixError {
         file: String,
