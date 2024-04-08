@@ -1,0 +1,13 @@
+[package]
+name = "flyway-naming-checker"
+authors = ["Seonghun Jung <dev.seonghun@gmail.com>"]
+description = "Flyway Naming Checker - GitHub Actions CI workflow for validating Flyway migration script names to ensure they follow the naming convention."
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.67"
+
+[dependencies]
+thiserror = "1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
