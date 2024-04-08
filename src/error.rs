@@ -13,17 +13,37 @@ pub enum FlywayNaimngCheckerError {
     #[error("file io error")]
     FileIoError,
 
-    #[error("naming error - expected: {expected}, found: {found}")]
-    FlywayNamingPrefixError { expected: String, found: String },
+    #[error(
+        "Flyway file prefix naming error found in file - expected: {expected}, found: {found}"
+    )]
+    FlywayNamingPrefixError {
+        file: String,
+        expected: String,
+        found: String,
+    },
 
-    #[error("naming error - expected: {expected}, found: {found}")]
-    FlywayNamingVersionError { expected: String, found: String },
+    #[error("Flyway file version naming error found in file : {file} - expected: {expected}, found: {found}")]
+    FlywayNamingVersionError {
+        file: String,
+        expected: String,
+        found: String,
+    },
 
-    #[error("naming error - expected: {expected}, found: {found}")]
-    FlywayNamingSeparatorError { expected: String, found: String },
+    #[error("Flyway file seperator naming error found in file : {file} - expected: {expected}, found: {found}")]
+    FlywayNamingSeparatorError {
+        file: String,
+        expected: String,
+        found: String,
+    },
 
-    #[error("naming error - expected: {expected}, found: {found}")]
-    FlywayNamingSufixError { expected: String, found: String },
+    #[error(
+        "Flyway file suffix naming error found in file : {file} - expected: {expected}, found: {found} "
+    )]
+    FlywayNamingSufixError {
+        file: String,
+        expected: String,
+        found: String,
+    },
 }
 
 impl From<io::Error> for FlywayNaimngCheckerError {

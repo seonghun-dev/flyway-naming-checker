@@ -17,6 +17,7 @@ pub fn is_valid_prefix(file_name: &str) -> Result<(), FlywayNaimngCheckerError> 
                 }
 
                 return Err(FlywayNaimngCheckerError::FlywayNamingPrefixError {
+                    file: file_name.to_string(),
                     expected: expected_prefix.to_string(),
                     found: prefix.to_string(),
                 });
@@ -26,6 +27,7 @@ pub fn is_valid_prefix(file_name: &str) -> Result<(), FlywayNaimngCheckerError> 
         }
         None => {
             return Err(FlywayNaimngCheckerError::FlywayNamingPrefixError {
+                file: file_name.to_string(),
                 expected: "V".to_string(),
                 found: " ".to_string(),
             });
@@ -34,11 +36,15 @@ pub fn is_valid_prefix(file_name: &str) -> Result<(), FlywayNaimngCheckerError> 
 }
 
 pub fn is_valid_suffix(file_name: &str) -> Result<(), FlywayNaimngCheckerError> {
-    if file_name.ends_with(".sql") {
-        return Err(FlywayNaimngCheckerError::FlywayNamingSufixError {
-            expected: ".sql".to_owned(),
-            found: ".test".to_owned(),
-        });
+    if let Some(dot_index) = file_name.rfind('.') {
+        let suffix = &file_name[dot_index + 1..];
+        if suffix != "sql" {
+            return Err(FlywayNaimngCheckerError::FlywayNamingSufixError {
+                file: file_name.to_string(),
+                expected: ".sql".to_owned(),
+                found: suffix.to_owned(),
+            });
+        }
     }
-    return Ok(());
+    Ok(())
 }
