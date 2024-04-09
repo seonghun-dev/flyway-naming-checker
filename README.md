@@ -14,7 +14,9 @@ Flyway's file convention is clearly specified. This action checks that all files
 
 [Flyway: Naming Patterns Matter | Redgate](https://www.red-gate.com/blog/database-devops/flyway-naming-patterns-matter)
 
-
+ **Make sure to write path. path means the migration file path.**
+ 
+ Do not start with /. It should be in the form of 'db/migration' instead of '/db/migration'.
 
 ![flyway_naming](https://github.com/seonghun-dev/flyway-naming-checker/assets/80201773/7d448c33-125f-45b2-a6f5-027264b9a9d6)
 
