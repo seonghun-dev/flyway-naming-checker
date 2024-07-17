@@ -1,4 +1,5 @@
 use crate::error::FlywayNaimngCheckerError;
+use std::collections::HashSet;
 
 pub fn is_valid_prefix(file_name: &str) -> Result<(), FlywayNaimngCheckerError> {
     let first_char = file_name.chars().next();
@@ -92,6 +93,54 @@ pub fn is_valid_version(file_name: &str) -> Result<(), FlywayNaimngCheckerError>
     }
 }
 
+pub fn check_for_duplicate_versions(file_names: &[String]) -> Result<(), FlywayNaimngCheckerError> {
+    let mut versions = HashSet::new();
+
+    for file_name in file_names {
+        if let Some(version) = extract_version(file_name) {
+            if !versions.insert(version) {
+                return Err(FlywayNaimngCheckerError::DuplicateVersion {
+                    file: file_name.to_string(),
+                });
+            }
+        }
+    }
+
+    Ok(())
+}
+
+pub fn check_for_skipped_versions(file_names: &[String]) -> Result<(), FlywayNaimngCheckerError> {
+    let mut versions: Vec<u32> = file_names
+        .iter()
+        .filter_map(|file_name| extract_version(file_name))
+        .collect();
+
+    if versions.is_empty() {
+        return Ok(());
+    }
+
+    versions.sort_unstable();
+
+    for window in versions.windows(2) {
+        if window[1] != window[0] + 1 {
+            return Err(FlywayNaimngCheckerError::SkippedVersion {
+                file: format!("From V{} to V{}", window[0], window[1]),
+            });
+        }
+    }
+
+    Ok(())
+}
+
+fn extract_version(file_name: &str) -> Option<u32> {
+    let parts: Vec<&str> = file_name.split("__").collect();
+    if parts.len() != 2 {
+        return None;
+    }
+    let version_part = parts[0].trim_start_matches(|c: char| !c.is_ascii_digit());
+    version_part.parse::<u32>().ok()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -159,6 +208,35 @@ mod tests {
                 file: "Vb__some_migration.sql".to_string(),
                 prefix: "V".to_string(),
                 found: "b".to_string(),
+            })
+        );
+    }
+
+    #[test]
+    fn test_duplicate_versions() {
+        let files = vec![
+            "V1__init.sql".to_string(),
+            "V2__add_table.sql".to_string(),
+            "V1__duplicate.sql".to_string(),
+        ];
+        assert_eq!(
+            check_for_duplicate_versions(&files),
+            Err(FlywayNaimngCheckerError::DuplicateVersion {
+                file: "V1__duplicate.sql".to_string(),
+            })
+        );
+    }
+
+    #[test]
+    fn test_skipped_versions() {
+        let files = vec![
+            "V1__init.sql".to_string(),
+            "V3__add_table.sql".to_string(),
+        ];
+        assert_eq!(
+            check_for_skipped_versions(&files),
+            Err(FlywayNaimngCheckerError::SkippedVersion {
+                file: "From V1 to V3".to_string(),
             })
         );
     }

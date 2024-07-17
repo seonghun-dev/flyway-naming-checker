@@ -46,6 +46,12 @@ pub enum FlywayNaimngCheckerError {
         expected: String,
         found: String,
     },
+
+    #[error("Duplicate version found in file : {file}")]
+    DuplicateVersion { file: String },
+
+    #[error("Skipped version detected: {file}")]
+    SkippedVersion { file: String },
 }
 
 impl From<io::Error> for FlywayNaimngCheckerError {
